@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FST Budget Tracker</title>
+
+<style>
+:root {
+  --green: #176b50;
+  --green-light: #e6f4ed;
+  --bg: #f6f5f1;
+  --text: #252a30;
+  --muted: #777e87;
+  --border: #e3e2dd;
+  --red: #b63d3d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  max-width: 850px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 27px;
+  margin: 12px 0 22px;
+}
+
+h2 { font-size: 19px; }
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 15px 0 7px;
+}
+
+input {
+  width: 100%;
+  padding: 13px;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--text);
+}
+
+input:focus {
+  outline: 2px solid #b8dfcc;
+  border-color: var(--green);
+}
+
+.percent-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 22px 125px;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.percent-row strong { font-size: 15px; }
+.percent-row input { text-align: right; }
+.amount { text-align: right; font-weight: bold; }
+
+.grand-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-top: 24px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+button {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 12px;
+  padding: 12px 15px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:active { transform: scale(.98); }
+
+.primary {
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+  font-weight: bold;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.danger { color: var(--red); }
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.status {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.warning {
+  display: none;
+  background: #fff2df;
+  color: #8a5100;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.entry {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 12px;
+}
+
+.entry-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.entry h3 {
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+
+.entry small { color: var(--muted); }
+
+.entry-total {
+  font-size: 19px;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 20px 0;
+}
+
+.hidden { display: none !important; }
+
+@media (max-width: 520px) {
+  body { padding: 12px; }
+  .card { padding: 16px; }
+  h1 { font-size: 24px; }
+
+  .percent-row {
+    grid-template-columns: minmax(0, 1fr) 66px 15px 94px;
+    gap: 5px;
+  }
+
+  .percent-row strong { font-size: 13px; }
+  .percent-row input { padding: 11px 6px; font-size: 14px; }
+  .amount { font-size: 14px; }
+  button { padding: 11px; }
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .no-print { display: none !important; }
+  .card { border: 0; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>FST Budget Tracker</h1>
+
+  <section class="card">
+    <h2 id="formTitle">New Budget Entry</h2>
+
+    <form id="budgetForm">
+      <label for="team">Team</label>
+      <input id="team" value="Funeral Service Team" required>
+
+      <label for="date">Petsa ng Service</label>
+      <input id="date" type="date" required>
+
+      <label for="name">Pangalan ng Namatay</label>
+      <input id="name" placeholder="Enter full name" required>
+
+      <label for="received">Total Cash Received (₱)</label>
+      <input id="received" type="number" min="0"
+        step="0.01" value="0" required>
+
+      <div style="margin-top:20px">
+        <div class="percent-row">
+          <strong>Tithes</strong>
+          <input id="pTithes" type="number" min="0"
+            max="100" step="1" value="10" aria-label="Tithes percentage">
+          <span>%</span>
+          <span class="amount" id="aTithes">₱0.00</span>
+        </div>
+
+        <div class="percent-row">
+          <strong>Offering</strong>
+          <input id="pOffering" type="number" min="0"
+            max="100" step="1" value="10" aria-label="Offering percentage">
+          <span>%</span>
+          <span class="amount" id="aOffering">₱0.00</span>
+        </div>
+
+        <div class="percent-row">
+          <strong>Savings</strong>
+          <input id="pSavings" type="number" min="0"
+            max="100" step="1" value="10" aria-label="Savings percentage">
+          <span>%</span>
+          <span class="amount" id="aSavings">₱0.00</span>
+        </div>
+
+        <div class="percent-row">
+          <strong>Food/Operating Expenses</strong>
+          <input id="pFood" type="number" min="0"
+            max="100" step="1" value="70" aria-label="Food expenses percentage">
+          <span>%</span>
+          <span class="amount" id="aFood">₱0.00</span>
+        </div>
+      </div>
+
+      <div id="warning" class="warning">
+        Ang total percentage ay kailangang eksaktong 100%
+        bago ma-save ang entry.
+      </div>
+
+      <div class="grand-total">
+        <span>Grand Total</span>
+        <span id="grandTotal">₱0.00</span>
+      </div>
+
+      <p class="status" id="percentStatus">Total allocation: 100%</p>
+
+      <div class="button-row">
+        <button class="primary" type="submit" id="saveButton">
+          Save Entry
+        </button>
+        <button type="button" id="cancelEdit" class="hidden">
+          Cancel Edit
+        </button>
+        <button type="button" id="copyCurrent">
+          Copy Text
+        </button>
+        <button type="reset" id="resetButton">
+          Clear Form
+        </button>
+      </div>
+
+      <p class="status" id="formStatus" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Saved Entries</h2>
+    <p class="status">
+      I-edit ang dating record o magdagdag ng bagong service.
+    </p>
+
+    <div id="entries">
+      <p class="empty">Wala pang saved entries.</p>
+    </div>
+
+    <div class="button-row no-print">
+      <button type="button" id="exportButton">
+        Export Backup
+      </button>
+      <button type="button" id="importButton">
+        Import Backup
+      </button>
+      <input id="importFile" type="file" accept=".json,application/json"
+        class="hidden">
+      <button type="button" id="printButton">
+        Print / Save PDF
+      </button>
+    </div>
+
+    <p class="status" id="storageStatus">
+      Entries are saved in this browser.
+    </p>
+  </section>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "fstBudgetTracker.entries.v1";
+
+  const $ = id => document.getElementById(id);
+
+  const money = value =>
+    "₱" + Number(value || 0).toLocaleString("en-PH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  const today = () => {
+    const d = new Date();
+    const local = new Date(
+      d.getTime() - d.getTimezoneOffset() * 60000
+    );
+    return local.toISOString().slice(0, 10);
+  };
+
+  let entries = [];
+  let editingId = null;
+  let storageAvailable = true;
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) entries = parsed;
+    }
+  } catch (error) {
+    storageAvailable = false;
+  }
+
+  function saveStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      storageAvailable = true;
+      $("storageStatus").textContent =
+        "Entries are saved in this browser.";
+    } catch (error) {
+      storageAvailable = false;
+      $("storageStatus").textContent =
+        "Hindi ma-save sa browser storage. I-export ang backup para hindi mawala ang data.";
+    }
+  }
+
+  function getFormData() {
+    const percent = {
+      tithes: Number($("pTithes").value),
+      offering: Number($("pOffering").value),
+      savings: Number($("pSavings").value),
+      food: Number($("pFood").value)
+    };
+
+    const totalPercent = Object.values(percent).reduce(
+      (sum, value) => sum + value, 0
+    );
+
+    return {
+      team: $("team").value.trim(),
+      date: $("date").value,
+      name: $("name").value.trim(),
+      received: Number($("received").value),
+      percent,
+      totalPercent
+    };
+  }
+
+  function calculate(data) {
+    const keys = ["tithes", "offering", "savings", "food"];
+    const amounts = {};
+    let allocated = 0;
+
+    keys.forEach((key, index) => {
+      // Round each allocation to centavos.
+      if (index < keys.length - 1) {
+        amounts[key] = Math.round(
+          data.received * data.percent[key]
+        ) / 100;
+        allocated += amounts[key];
+      } else {
+        amounts[key] = Math.round(
+          data.received * data.percent[key]
+        ) / 100;
+      }
+    });
+
+    const total = Object.values(amounts).reduce(
+      (sum, value) => sum + value, 0
+    );
+
+    return { amounts, total };
+  }
+
+  function updatePreview() {
+    const data = getFormData();
+    const result = calculate(data);
+
+    $("aTithes").textContent = money(result.amounts.tithes);
+    $("aOffering").textContent = money(result.amounts.offering);
+    $("aSavings").textContent = money(result.amounts.savings);
+    $("aFood").textContent = money(result.amounts.food);
+    $("grandTotal").textContent = money(result.total);
+
+    const validPercent =
+      Object.values(data.percent).every(
+        value => Number.isFinite(value) && value >= 0 && value <= 100
+      ) && Math.abs(data.totalPercent - 100) < 0.000001;
+
+    $("percentStatus").textContent =
+      "Total allocation: " +
+      Number(data.totalPercent.toFixed(2)) + "%";
+
+    $("warning").style.display = validPercent ? "none" : "block";
+    $("saveButton").disabled = !validPercent;
+    $("saveButton").style.opacity = validPercent ? "1" : ".55";
+  }
+
+  function makeSummary(entry) {
+    const result = calculate(entry);
+    const date = entry.date || "No date";
+
+    return [
+      "FST BUDGET REPORT",
+      "Team: " + entry.team,
+      "Date of Service: " + date,
+      "Name: " + entry.name,
+      "",
+      "Total Cash Received: " + money(entry.received),
+      "",
+      "Tithes (" + entry.percent.tithes + "%): " +
+        money(result.amounts.tithes),
+      "Offering (" + entry.percent.offering + "%): " +
+        money(result.amounts.offering),
+      "Savings (" + entry.percent.savings + "%): " +
+        money(result.amounts.savings),
+      "Food/Operating Expenses (" + entry.percent.food + "%): " +
+        money(result.amounts.food),
+      "",
+      "Grand Total Allocated: " + money(result.total),
+      "Remaining Balance: " + money(entry.received - result.total)
+    ].join("\n");
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      $("formStatus").textContent = "Report copied!";
+    } catch (error) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+
+      try {
+        const copied = document.execCommand("copy");
+        $("formStatus").textContent = copied
+          ? "Report copied!"
+          : "Hindi makopya. Piliin at kopyahin ang text manually.";
+      } catch (err) {
+        $("formStatus").textContent =
+          "Hindi makopya. Piliin at kopyahin ang text manually.";
+      }
+
+      area.remove();
+    }
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[char]));
+  }
+
+  function renderEntries() {
+    const root = $("entries");
+
+    if (!entries.length) {
+      root.innerHTML = '<p class="empty">Wala pang saved entries.</p>';
+      return;
+    }
+
+    root.innerHTML = entries.map(entry => {
+      const result = calculate(entry);
+
+      return `
+        <article class="entry">
+          <div class="entry-head">
+            <div>
+              <h3>${escapeHTML(entry.name)}</h3>
+              <small>${escapeHTML(entry.team)} ·
+                ${escapeHTML(entry.date)}</small>
+            </div>
+            <strong>${money(entry.received)}</strong>
+          </div>
+
+          <div class="entry-total">
+            Allocated: ${money(result.total)}
+          </div>
+
+          <p class="status">
+            Tithes: ${money(result.amounts.tithes)} ·
+            Offering: ${money(result.amounts.offering)}<br>
+            Savings: ${money(result.amounts.savings)} ·
+            Food: ${money(result.amounts.food)}
+          </p>
+
+          <div class="entry-actions no-print">
+            <button type="button" data-action="edit"
+              data-id="${escapeHTML(entry.id)}">Edit</button>
+            <button type="button" data-action="copy"
+              data-id="${escapeHTML(entry.id)}">Copy Text</button>
+            <button type="button" class="danger" data-action="delete"
+              data-id="${escapeHTML(entry.id)}">Delete</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function resetForm() {
+    editingId = null;
+    $("budgetForm").reset();
+    $("team").value = "Funeral Service Team";
+    $("date").value = today();
+    $("name").value = "";
+    $("received").value = "0";
+
+    $("pTithes").value = "10";
+    $("pOffering").value = "10";
+    $("pSavings").value = "10";
+    $("pFood").value = "70";
+
+    $("formTitle").textContent = "New Budget Entry";
+    $("saveButton").textContent = "Save Entry";
+    $("cancelEdit").classList.add("hidden");
+    $("formStatus").textContent = "";
+
+    updatePreview();
+  }
+
+  function editEntry(id) {
+    const entry = entries.find(item => item.id === id);
+    if (!entry) return;
+
+    editingId = id;
+
+    $("team").value = entry.team;
+    $("date").value = entry.date;
+    $("name").value = entry.name;
+    $("received").value = entry.received;
+
+    $("pTithes").value = entry.percent.tithes;
+    $("pOffering").value = entry.percent.offering;
+    $("pSavings").value = entry.percent.savings;
+    $("pFood").value = entry.percent.food;
+
+    $("formTitle").textContent = "Edit Budget Entry";
+    $("saveButton").textContent = "Save Changes";
+    $("cancelEdit").classList.remove("hidden");
+
+    updatePreview();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  $("budgetForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const data = getFormData();
+
+    if (!data.team || !data.date || !data.name) {
+      $("formStatus").textContent =
+        "Pakikumpleto ang team, petsa, at pangalan.";
+      return;
+    }
+
+    if (!Number.isFinite(data.received) || data.received < 0) {
+      $("formStatus").textContent =
+        "Maglagay ng valid na amount.";
+      return;
+    }
+
+    if (
+      !Object.values(data.percent).every(
+        value => Number.isFinite(value) && value >= 0 && value <= 100
+      ) ||
+      Math.abs(data.totalPercent - 100) > 0.000001
+    ) {
+      $("formStatus").textContent =
+        "Dapat ang total percentage ay eksaktong 100%.";
+      return;
+    }
+
+    if (editingId) {
+      const index = entries.findIndex(item => item.id === editingId);
+      if (index < 0) return;
+
+      entries[index] = {
+        ...entries[index],
+        ...data,
+        id: editingId
+      };
+
+      $("formStatus").textContent = "Entry updated.";
+    } else {
+      entries.unshift({
+        ...data,
+        id: Date.now().toString() + "-" +
+          Math.random().toString(36).slice(2, 8)
+      });
+
+      $("formStatus").textContent = "New entry saved.";
+    }
+
+    saveStorage();
+    renderEntries();
+    resetForm();
+    $("formStatus").textContent = "Entry successfully saved.";
+  });
+
+  $("entries").addEventListener("click", event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const id = button.dataset.id;
+    const action = button.dataset.action;
+    const entry = entries.find(item => item.id === id);
+
+    if (!entry) return;
+
+    if (action === "edit") {
+      editEntry(id);
+    }
+
+    if (action === "copy") {
+      copyText(makeSummary(entry));
+    }
+
+    if (action === "delete") {
+      if (confirm(
+        "Sigurado ka bang gusto mong burahin ang entry para kay " +
+        entry.name + "?"
+      )) {
+        entries = entries.filter(item => item.id !== id);
+
+        if (editingId === id) resetForm();
+
+        saveStorage();
+        renderEntries();
+      }
+    }
+  });
+
+  ["received", "pTithes", "pOffering", "pSavings", "pFood"]
+    .forEach(id => $(id).addEventListener("input", updatePreview));
+
+  $("cancelEdit").addEventListener("click", resetForm);
+  $("resetButton").addEventListener("click", () => {
+    setTimeout(() => {
+      editingId = null;
+      $("formTitle").textContent = "New Budget Entry";
+      $("saveButton").textContent = "Save Entry";
+      $("cancelEdit").classList.add("hidden");
+      updatePreview();
+    }, 0);
+  });
+
+  $("copyCurrent").addEventListener("click", () => {
+    const data = getFormData();
+
+    if (!data.name.trim()) {
+      $("formStatus").textContent =
+        "Ilagay muna ang pangalan bago kopyahin ang report.";
+      return;
+    }
+
+    copyText(makeSummary(data));
+  });
+
+  $("exportButton").addEventListener("click", () => {
+    const blob = new Blob(
+      [JSON.stringify(entries, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "fst-budget-backup.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  });
+
+  $("importButton").addEventListener("click", () => {
+    $("importFile").click();
+  });
+
+  $("importFile").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const imported = JSON.parse(await file.text());
+
+      if (!Array.isArray(imported)) {
+        throw new Error("Invalid backup");
+      }
+
+      const valid = imported.every(entry =>
+        entry &&
+        typeof entry.id === "string" &&
+        typeof entry.team === "string" &&
+        typeof entry.name === "string" &&
+        typeof entry.date === "string" &&
+        Number.isFinite(Number(entry.received)) &&
+        entry.percent &&
+        ["tithes", "offering", "savings", "food"].every(key =>
+          Number.isFinite(Number(entry.percent[key])) &&
+          Number(entry.percent[key]) >= 0
+        ) &&
+        Math.abs(
+          Number(entry.percent.tithes) +
+          Number(entry.percent.offering) +
+          Number(entry.percent.savings) +
+          Number(entry.percent.food) - 100
+        ) < 0.000001
+      );
+
+      if (!valid) throw new Error("Invalid entry data");
+
+      if (confirm(
+        "Papaltan ang kasalukuyang saved entries ng entries sa backup?"
+      )) {
+        entries = imported;
+        saveStorage();
+        renderEntries();
+        resetForm();
+      }
+    } catch (error) {
+      alert("Hindi valid ang backup file.");
+    }
+
+    event.target.value = "";
+  });
+
+  $("printButton").addEventListener("click", () => window.print());
+
+  $("date").value = today();
+  renderEntries();
+  updatePreview();
+
+  if (!storageAvailable) {
+    $("storageStatus").textContent =
+      "Browser storage is unavailable. Gumamit ng Export Backup.";
+  }
+})();
+</script>
+</body>
+</html>
