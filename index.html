@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memorial Service Financial Report - Lolita Borja</title>
+
+<style>
+:root {
+  --primary: #244b73;
+  --text: #243247;
+  --muted: #667085;
+  --border: #d9e0e8;
+  --light: #f4f7fb;
+  --green: #26734d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #eef2f6;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+.report {
+  max-width: 900px;
+  margin: auto;
+  padding: 38px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(20,35,55,.08);
+}
+
+header {
+  padding-bottom: 22px;
+  border-bottom: 3px solid var(--primary);
+}
+
+.eyebrow {
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+h1 {
+  margin: 8px 0;
+  font-size: 28px;
+}
+
+.subtitle {
+  color: var(--muted);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.detail {
+  padding: 12px;
+  background: var(--light);
+  border-radius: 8px;
+}
+
+.detail span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+h2 {
+  margin-top: 28px;
+  padding-bottom: 7px;
+  font-size: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  background: var(--light);
+  font-size: 13px;
+}
+
+.amount {
+  text-align: right;
+  white-space: nowrap;
+}
+
+tfoot td {
+  background: #fafbfd;
+  font-weight: bold;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.metric {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 21px;
+}
+
+.balance strong {
+  color: var(--green);
+}
+
+.note {
+  margin-top: 18px;
+  padding: 15px;
+  background: var(--light);
+  border-left: 4px solid var(--primary);
+  border-radius: 5px;
+}
+
+.signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 55px;
+}
+
+.sign-line {
+  padding-top: 8px;
+  border-top: 1px solid #7b8794;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+footer {
+  margin-top: 30px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.actions {
+  max-width: 900px;
+  margin: 0 auto 14px;
+  text-align: right;
+}
+
+button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 7px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  body {
+    padding: 10px;
+  }
+
+  .report {
+    padding: 18px 12px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .details, .summary {
+    grid-template-columns: 1fr;
+  }
+
+  th, td {
+    padding: 9px 6px;
+    font-size: 12px;
+  }
+
+  .signatures {
+    gap: 20px;
+  }
+}
+
+@media print {
+  body {
+    padding: 0;
+    background: white;
+  }
+
+  .report {
+    max-width: none;
+    padding: 10mm;
+    border: none;
+    box-shadow: none;
+  }
+
+  .actions {
+    display: none;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="actions">
+  <button onclick="window.print()">
+    Print / Save as PDF
+  </button>
+</div>
+
+<main class="report">
+
+<header>
+  <div class="eyebrow">
+    Memorial Service • Financial Report
+  </div>
+
+  <h1>Expense and Fund Utilization Report</h1>
+
+  <p class="subtitle">
+    Memorial service support and financial accountability
+  </p>
+
+  <div class="details">
+    <div class="detail">
+      <span>Name of Deceased</span>
+      <strong>Lolita Borja</strong>
+    </div>
+
+    <div class="detail">
+      <span>Date of Service</span>
+      <strong>October 20, 2026</strong>
+    </div>
+
+    <div class="detail">
+      <span>Location</span>
+      <strong>St. Peter – Sampaloc</strong>
+    </div>
+  </div>
+</header>
+
+<h2>1. Funds Received</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Source</th>
+  <th>Details</th>
+  <th class="amount">Amount</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td>Family</td>
+  <td>Amount received from the family</td>
+  <td class="amount">₱1,000.00</td>
+</tr>
+
+<tr>
+  <td>Sponsor</td>
+  <td>From Pastor Darell</td>
+  <td class="amount">₱1,000.00</td>
+</tr>
+</tbody>
+
+<tfoot>
+<tr>
+  <td colspan="2">Total Funds Received</td>
+  <td class="amount">₱2,000.00</td>
+</tr>
+</tfoot>
+</table>
+
+<h2>2. Expenses and Other Allocations</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Category</th>
+  <th>Details</th>
+  <th class="amount">Amount</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td>Food Expense</td>
+  <td>Food purchased for the service</td>
+  <td class="amount">₱1,731.01</td>
+</tr>
+
+<tr>
+  <td>Tithes</td>
+  <td>10% of the ₱2,000.00 received</td>
+  <td class="amount">₱200.00</td>
+</tr>
+
+<tr>
+  <td>Offering</td>
+  <td>Remaining amount after food expense and tithes</td>
+  <td class="amount">₱68.99</td>
+</tr>
+</tbody>
+
+<tfoot>
+<tr>
+  <td colspan="2">Total Expenses and Allocations</td>
+  <td class="amount">₱2,000.00</td>
+</tr>
+</tfoot>
+</table>
+
+<div class="summary">
+  <div class="metric">
+    <span>Total Received</span>
+    <strong>₱2,000.00</strong>
+  </div>
+
+  <div class="metric">
+    <span>Total Expenses / Allocations</span>
+    <strong>₱2,000.00</strong>
+  </div>
+
+  <div class="metric balance">
+    <span>Remaining Balance</span>
+    <strong>₱0.00</strong>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Financial Summary</strong><br><br>
+
+  The total amount received was ₱2,000.00, consisting of
+  ₱1,000.00 from the family and ₱1,000.00 sponsored by
+  Pastor Darell.
+
+  After paying ₱1,731.01 for food, ₱268.99 remained.
+  Of this amount, ₱200.00 was allocated for tithes and
+  ₱68.99 for offering.
+
+  The full amount has been accounted for, leaving
+  ₱0.00 balance and no savings from these funds.
+</div>
+
+<h2>3. Budget Allocation for Future Funds Received</h2>
+
+<p>
+  For any new funds received in the future, the following
+  percentage-based budget allocation will be applied:
+</p>
+
+<table>
+<thead>
+<tr>
+  <th>Budget Category</th>
+  <th class="amount">Percentage</th>
+  <th class="amount">Per ₱1,000.00</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><strong>Tithes</strong></td>
+  <td class="amount">10%</td>
+  <td class="amount">₱100.00</td>
+</tr>
+
+<tr>
+  <td><strong>Offering</strong></td>
+  <td class="amount">10%</td>
+  <td class="amount">₱100.00</td>
+</tr>
+
+<tr>
+  <td><strong>Savings</strong></td>
+  <td class="amount">10%</td>
+  <td class="amount">₱100.00</td>
+</tr>
+
+<tr>
+  <td><strong>Food / Operating Expenses</strong></td>
+  <td class="amount">70%</td>
+  <td class="amount">₱700.00</td>
+</tr>
+</tbody>
+
+<tfoot>
+<tr>
+  <td>Total Allocation</td>
+  <td class="amount">100%</td>
+  <td class="amount">₱1,000.00</td>
+</tr>
+</tfoot>
+</table>
+
+<p style="font-size:13px;color:#667085;">
+  Note: The sample amounts illustrate how each ₱1,000.00
+  in new funds will be allocated. Actual amounts will
+  depend on the total new funds received.
+</p>
+
+<div class="signatures">
+  <div class="sign-line">Prepared by</div>
+  <div class="sign-line">Reviewed / Approved by</div>
+</div>
+
+<footer>
+  Prepared for record-keeping and financial transparency.
+</footer>
+
+</main>
+
+</body>
+</html>
